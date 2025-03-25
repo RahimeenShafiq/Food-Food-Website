@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodFood - Menu</title>
+    <link rel="stylesheet" href="Assets/bootstrap.css">
+    <link rel="stylesheet" href="Assets/bootstrap.js">
+    <style>
+        /* Popup Styles */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: none;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+        .popup button {
+            margin: 10px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .checkout-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .continue-btn {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">🍔 FoodFood</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="Index.html">🏠 Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Restaurants.html">🍽️ Restaurants</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Cart and Checkout.html">🛒 Cart</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Track.html">📍 Track</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Contact.html">📞 Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="SignUp.html">🔑 Login/SignUp</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Menu Section -->
+    <section class="container my-5">
+        <h2 class="text-center mb-4" id="restaurantTitle">Our Delicious Menu</h2>
+        <div class="row" id="menuItems"></div>
+    </section>
+
+    <!-- Custom Popup -->
+    <div id="cartPopup" class="popup">
+        <h4>Item added to cart! 🎉</h4>
+        <button class="continue-btn" onclick="closePopup()">Add More Items</button>
+        <button class="checkout-btn" onclick="goToCheckout()">Go to Checkout</button>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2025 FoodFood | Order. Eat. Repeat!</p>
+    </footer>
+    
+    <script>
+        const menus = {
+            "Tasty Bites": [
+                { name: "ZingerBurger", price: 8.99, img: "ZingerBurger.jpg" },
+                { name: "HamBurger", price: 12.99, img: "HamBurger.jpg" },
+                { name: "CheeseBurger", price: 10.99, img: "CheeseBurger.jpg" }
+            ],
+            "Spice Hub": [
+                { name: "BeefChilli", price: 8.99, img: "BeefChilli.jpg" },
+                { name: "Barbecue", price: 12.99, img: "Barbecue.jpg" },
+                { name: "ChickenTikka", price: 10.99, img: "ChickenTikka.jpg" }
+            ],
+            "Pizza Palace": [
+                { name: "ItalianPizza", price: 8.99, img: "ItalianPizza.jpg" },
+                { name: "PepperoniPizza", price: 12.99, img: "PepperoniPizza.jpg" },
+                { name: "CheesePizza", price: 10.99, img: "CheesePizza.jpg" }
+            ]
+        };
+
+        function renderMenu() {
+            const params = new URLSearchParams(window.location.search);
+            const restaurant = params.get("restaurant");
+            document.getElementById("restaurantTitle").textContent = restaurant + " Menu";
+
+            const menuContainer = document.getElementById("menuItems");
+            menuContainer.innerHTML = "";
+            
+            if (menus[restaurant]) {
+                menus[restaurant].forEach(item => {
+                    menuContainer.innerHTML += `
+                        <div class="col-md-4">
+                            <div class="card">
+                                <img src="Assets/${item.img}" class="card-img-top" alt="${item.name}">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">${item.name}</h5>
+                                    <p class="text-danger fw-bold">$${item.price.toFixed(2)}</p>
+                                    <button class="btn btn-danger" onclick="addToCart('${item.name}', ${item.price})">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+        }
+
+        function addToCart(name, price) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.push({ name, price });
+            localStorage.setItem("cart", JSON.stringify(cart));
+            document.getElementById("cartPopup").style.display = "block"; // Show popup
+        }
+
+        function closePopup() {
+            document.getElementById("cartPopup").style.display = "none"; // Hide popup
+        }
+
+        function goToCheckout() {
+            window.location.href = "Cart and Checkout.html"; // Redirect to cart page
+        }
+
+        window.onload = renderMenu;
+    </script>
+</body>
+</html>
